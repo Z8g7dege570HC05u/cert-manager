@@ -7,7 +7,7 @@ metadata:
   labels:
     app: webhook
   annotations:
-    certmanager.k8s.io/inject-ca-from: "cert-manager/cert-manager-webhook-webhook-tls"
+    certmanager.k8s.io/inject-ca-from: "{{ k8s_namespace }}/{{ app_name }}-webhook-webhook-tls"
 spec:
   group: admission.certmanager.k8s.io
   groupPriorityMinimum: 1000

@@ -4,3 +4,5 @@ common:
   k8s_namespace: cert-manager
 
   app_name: cert-manager
+
+  image_version: v0.7.0
