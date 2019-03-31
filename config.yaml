@@ -23,6 +23,10 @@ common:
     - template: webhook/020_deployment.yaml.j2
     # ERROR:k8s_handle:RuntimeError: Unknown kind "APIService" in generated file
     # - template: webhook/030_apiService.yaml.j2
+    # ERROR:k8s_handle:RuntimeError: Unknown kind "ValidatingWebhookConfiguration"
+    # - template: webhook/040_ValidatingWebhookConfiguration.yaml.j2
+    # ERROR:k8s_handle:RuntimeError: Unknown kind "Issuer"
+    # - template: webhook/050_selfsignedIssuer.yaml.j2
 
 main:
   app_name: cert-manager
