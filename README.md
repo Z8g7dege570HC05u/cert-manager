@@ -2,7 +2,7 @@
 
 #### Before deploy
 
-Deploy custom resource by kubectl, because [2gis/k8s-handle#86](https://github.com/2gis/k8s-handle/issues/86)
+Deploy custom resource by kubectl, because [2gis/k8s-handle#85](https://github.com/2gis/k8s-handle/issues/85)
 ```
 kubectl apply -f templates/000-crds.yaml
 ```

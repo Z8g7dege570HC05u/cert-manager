@@ -6,3 +6,23 @@ common:
   app_name: cert-manager
 
   image_version: v0.7.0
+
+  templates:
+    # For 000_crds.yaml - see README.md
+    # - template: 000_crds.yaml
+    - template: 001_namespace.yaml.j2
+    - template: CAinjector/001_serviceAccount.yaml.j2
+    - template: CAinjector/005_RBAC.yaml.j2
+    - template: CAinjector/020_deployment.yaml.j2
+    - template: certManager/001_serviceAccount.yaml.j2
+    - template: certManager/005_RBAC.yaml.j2
+    - template: certManager/020_deployment.yaml.j2
+    - template: webhook/001_serviceAccount.yaml.j2
+    - template: webhook/005_RBAC.yaml.j2
+    - template: webhook/010_service.yaml.j2
+    - template: webhook/020_deployment.yaml.j2
+    # ERROR:k8s_handle:RuntimeError: Unknown kind "APIService" in generated file
+    # - template: webhook/030_apiService.yaml.j2
+
+main:
+  app_name: cert-manager
