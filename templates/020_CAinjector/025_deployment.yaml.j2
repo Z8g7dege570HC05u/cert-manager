@@ -1,0 +1,31 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ app_name }}-cainjector
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: cainjector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cainjector
+  template:
+    metadata:
+      labels:
+        app: cainjector
+    spec:
+      serviceAccountName: {{ app_name }}-cainjector
+      containers:
+          - name: cainjector
+            image: "quay.io/jetstack/cert-manager-cainjector:v0.7.0"
+            imagePullPolicy: IfNotPresent
+            args:
+              - --leader-election-namespace=$(POD_NAMESPACE)
+            env:
+              - name: POD_NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace

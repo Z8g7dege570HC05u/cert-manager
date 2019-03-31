@@ -1,0 +1,41 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ app_name }}-webhook
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook
+  template:
+    metadata:
+      labels:
+        app: webhook
+    spec:
+      serviceAccountName: {{ app_name }}-webhook
+      containers:
+          - name: webhook
+            image: "quay.io/jetstack/cert-manager-webhook:v0.7.0"
+            imagePullPolicy: IfNotPresent
+            args:
+              - --v=12
+              - --secure-port=6443
+              - --tls-cert-file=/certs/tls.crt
+              - --tls-private-key-file=/certs/tls.key
+            env:
+              - name: POD_NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+            volumeMounts:
+              - name: certs
+                mountPath: /certs
+      volumes:
+        - name: certs
+          secret:
+            secretName: {{ app_name }}-webhook-webhook-tls
