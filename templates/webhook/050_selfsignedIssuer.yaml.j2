@@ -1,0 +1,65 @@
+---
+
+# Create a selfsigned Issuer, in order to create a root CA certificate for
+# signing webhook serving certificates
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: {{ app_name }}-webhook-selfsign
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: webhook
+spec:
+  selfSigned: {}
+
+---
+
+# Generate a CA Certificate used to sign certificates for the webhook
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: {{ app_name }}-webhook-ca
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: webhook
+spec:
+  secretName: {{ app_name }}-webhook-ca
+  duration: 43800h # 5y
+  issuerRef:
+    name: {{ app_name }}-webhook-selfsign
+  commonName: "ca.webhook.{{ k8s_namespace }}"
+  isCA: true
+
+---
+
+# Create an Issuer that uses the above generated CA certificate to issue certs
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: {{ app_name }}-webhook-ca
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: webhook
+spec:
+  ca:
+    secretName: {{ app_name }}-webhook-ca
+
+---
+
+# Finally, generate a serving certificate for the webhook to use
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: {{ app_name }}-webhook-webhook-tls
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: webhook
+spec:
+  secretName: {{ app_name }}-webhook-webhook-tls
+  duration: 8760h # 1y
+  issuerRef:
+    name: {{ app_name }}-webhook-ca
+  dnsNames:
+    - {{ app_name }}-webhook
+    - {{ app_name }}-webhook.{{ k8s_namespace }}
+    - {{ app_name }}-webhook.{{ k8s_namespace }}.svc
