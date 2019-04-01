@@ -1,0 +1,39 @@
+---
+
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: {{ issuers.letsencrypt.name }}
+spec:
+  acme:
+    email: {{ issuers.letsencrypt.email }}
+    server: {{ issuers.letsencrypt.server }}
+    privateKeySecretRef:
+      # Secret resource used to store the account's private key.
+      name: {{ issuers.letsencrypt.privateKeySecretRef.name }}
+    {% if issuers.letsencrypt.challengeMechanism.type == "http" -%}
+    http01: {}
+    {% elif issuers.letsencrypt.challengeMechanism.type == "dns" -%}
+    dns01:
+      providers:
+      - name:  {{ issuers.letsencrypt.challengeMechanism.dns.name }}
+        route53:
+          accessKeyID: {{ issuers.letsencrypt.challengeMechanism.dns.accessKeyID }}
+          region: {{ issuers.letsencrypt.challengeMechanism.dns.region }}
+          hostedZoneID: {{ issuers.letsencrypt.challengeMechanism.dns.hostedZoneID }}
+          secretAccessKeySecretRef:
+            name: {{ issuers.letsencrypt.challengeMechanism.dns.secretAccessKeySecretRef.name }}
+            key: secret-access-key
+    {% endif -%}
+
+{% if issuers.letsencrypt.challengeMechanism.type == "dns" %}
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ issuers.letsencrypt.challengeMechanism.dns.secretAccessKeySecretRef.name }}
+  namespace: {{ k8s_namespace }}
+data:
+  secret-access-key: "{{ issuers.letsencrypt.challengeMechanism.dns.secretAccessKeySecretRef.data }}"
+{% endif -%}
