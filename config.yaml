@@ -10,10 +10,10 @@ common:
     letsencrypt:
       name: letsencrypt-staging
       email: user@example.com
-      server: https://acme-staging-v02.api.letsencrypt.org/directory
+      server: https://acme-staging-v02.api.letsencrypt.org/directory # Staging
+      # server: https://acme-v02.api.letsencrypt.org/directory # Production
       challengeMechanism:
-        key: http01
-        value: {}
+        type: http
       privateKeySecretRef:
         name: example-issuer-account-key
 
@@ -36,22 +36,50 @@ common:
     # - template: webhook/030_apiService.yaml.j2
     # ERROR:k8s_handle:RuntimeError: Unknown kind "ValidatingWebhookConfiguration"
     # - template: webhook/040_ValidatingWebhookConfiguration.yaml.j2
-    # ERROR:k8s_handle:RuntimeError: Unknown kind "Issuer"
-    # - template: webhook/050_selfsignedIssuer.yaml.j2
 
+# For deploy Cert-Manager
 main:
   app_name: cert-manager
 
+
+# Deploy issuers
 staging_issuer:
+
   issuers:
     letsencrypt:
       name: letsencrypt-staging
       email: id.kuka@gmail.com
       server: https://acme-staging-v02.api.letsencrypt.org/directory
-      challengeMechanism:
-        key: dns01
       privateKeySecretRef:
         name: letsencrypt-staging-account-key
-  # templates:
+      challengeMechanism:
+        type: dns
+        dns:
+          name: eu-central-1-zones
+          region: eu-central-1
+          accessKeyID: MyAmazonOpenKey
+          hostedZoneID: MyAmazonZoneID
+          secretAccessKeySecretRef:
+            name: letsencrypt-route53-credentials
+            data: "{{ env='ROUTE53_STAGING_SECRET_KEY' }}"
+
+  templates:
     # ERROR:k8s_handle:RuntimeError: Unknown kind "ClusterIssuer" in generated file
-    # - template: ClusterIssuers/letsencrypt.yaml.j2
+    - template: ClusterIssuers/letsencrypt.yaml.j2
+
+
+http_issuer:
+
+  issuers:
+    letsencrypt:
+      name: letsencrypt-http-staging
+      email: id.kuka@gmail.com
+      server: https://acme-staging-v02.api.letsencrypt.org/directory
+      privateKeySecretRef:
+        name: letsencrypt-http-staging-account-key
+      challengeMechanism:
+        type: http
+
+  templates:
+    # ERROR:k8s_handle:RuntimeError: Unknown kind "ClusterIssuer" in generated file
+    - template: ClusterIssuers/letsencrypt.yaml.j2
