@@ -48,7 +48,7 @@ staging_issuer:
   issuers:
     letsencrypt:
       name: letsencrypt-staging
-      email: id.kuka@gmail.com
+      email: mail@gmail.com
       server: https://acme-staging-v02.api.letsencrypt.org/directory
       privateKeySecretRef:
         name: letsencrypt-staging-account-key
@@ -73,7 +73,7 @@ http_issuer:
   issuers:
     letsencrypt:
       name: letsencrypt-http-staging
-      email: id.kuka@gmail.com
+      email: mail@gmail.com
       server: https://acme-staging-v02.api.letsencrypt.org/directory
       privateKeySecretRef:
         name: letsencrypt-http-staging-account-key
