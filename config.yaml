@@ -32,9 +32,8 @@ common:
     - template: webhook/005_RBAC.yaml.j2
     - template: webhook/010_service.yaml.j2
     - template: webhook/020_deployment.yaml.j2
-    # ERROR:k8s_handle:RuntimeError: Unknown kind "APIService" in generated file
+    # ERROR:k8s_handle:RuntimeError: Unknown kinds
     # - template: webhook/030_apiService.yaml.j2
-    # ERROR:k8s_handle:RuntimeError: Unknown kind "ValidatingWebhookConfiguration"
     # - template: webhook/040_ValidatingWebhookConfiguration.yaml.j2
 
 # For deploy Cert-Manager
